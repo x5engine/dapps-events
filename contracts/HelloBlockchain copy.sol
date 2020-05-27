@@ -8,6 +8,7 @@ contract BlockchainRocks
 
     //List of properties
     StateType public  State;
+    uint256 public callsCount;
     address public  Requestor;
     address public  Responder;
 
@@ -15,6 +16,7 @@ contract BlockchainRocks
     string public ResponseMessage;
 
     event StateChanged(string stateData);
+    event ContractCallCounter(uint256 counter);
 
     // constructor function
     constructor(string memory message) public
@@ -29,20 +31,22 @@ contract BlockchainRocks
     function SendRequest(string memory requestMessage) public
     {
         Requestor = msg.sender;
-
+        callsCount = callsCount + 1;
         RequestMessage = requestMessage;
         State = StateType.Request;
+        emit ContractCallCounter(callsCount);
     }
 
     // call this function to send a response
     function SendResponse(string memory responseMessage) public
     {
         Responder = msg.sender;
-
         // call ContractUpdated() to record this action
+        callsCount = callsCount + 1;
         ResponseMessage = responseMessage;
         State = StateType.Respond;
 
         emit StateChanged('Response');
+        emit ContractCallCounter(callsCount);
     }
 }

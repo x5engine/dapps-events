@@ -6,64 +6,92 @@ import { useToasts } from 'react-toast-notifications'
 import Web3 from "web3"
 import abi from "./abis/contract"
 
-var EventGridClient = require("azure-eventgrid");
-var msRestAzure = require('ms-rest-azure');
-var uuid = require('uuid').v4;
+var provider = new Web3.providers.WebsocketProvider("wss://x5engine.blockchain.azure.com:3300/E-FlUTqcGM65Si6SaBQwe6sg");
+var web3 = new Web3(provider);
 
-
-const rpc = "https://x5engine.blockchain.azure.com:3200/E-FlUTqcGM65Si6SaBQwe6sg"
-
-const web3 = new Web3(new Web3.providers.HttpProvider(rpc));
-
-
-
-var myContract = new web3.eth.Contract(abi, '0xD40E842007B4Ec0421eF5CfB73AB8bB143d373e1');
-
-let topicCreds = new msRestAzure.TopicCredentials('vKmSeQ7majfqJvA/eBGY/6PB9aD/swJcHHJhI2bRn2I=');
-let EGClient = new EventGridClient(topicCreds, 'ca1f67a4-c5b3-43e7-9d3d-00cd0a0f4760');
-let topicHostName = 'https://eventsgrid.westeurope-1.eventgrid.azure.net/api/events';
-let events = [
-  {
-    id: uuid(),
-    subject: 'TestSubject',
-    dataVersion: '1.0',
-    eventType: 'Microsoft.MockPublisher.TestEvent',
-    data: {
-      field1: 'value1',
-      filed2: 'value2'
-    }
-  }
-];
+var myContract = new web3.eth.Contract(abi, '0x89da55DFda82E2874E5d7054D772FFFCF488C38B');
 
 function App() {
   const [count, setCount] = useState(0);
-  const [error, setError] = useState("");
+  const [text, setText] = useState("");
   const { addToast } = useToasts()
 
   useEffect(() => {
     subscribe2Events()
   }, []);
 
-  // 0x8fbf346523616c015d34c71713ea41bb98008282341b0f191f578d20d7ed26e2
   
 
+  const handleChange =  (e) => {
+    setText(e.target.value)
+  }
   const subscribe2Events =  () => {
-
-    // EGClient.publishEvents(topicHostName, events).then((result) => {
-    //   return Promise.resolve(console.log('Published events successfully.', result));
-    // }).catch((err) => {
-    //   console.log('An error ocurred');
-    //   console.dir(err, { depth: null, colors: true });
-    // });
+    var subscription = web3.eth.subscribe('logs', {
+      address: '0x89da55DFda82E2874E5d7054D772FFFCF488C38B',
+      // topics: ['0x8fbf346523616c015d34c71713ea41bb98008282341b0f191f578d20d7ed26e2']
+    }, function (error, result) {
+      // if (!error)
+        console.log("subscription",error, result);
+        // onSubmit(result)
+    });
+    console.log("myContract", myContract);
+    onSubmit("Connected to Contract 0x89da55DFda82E2874E5d7054D772FFFCF488C38B")
+    myContract.events.allEvents({ fromBlock: 'latest' }, function (error, event) { console.log("events logs",error,event); })
+      .on("connected", (subscriptionId) => {
+        console.log("connected subscriptionId:",subscriptionId);
+        
+      })
+      .on('data', (event) => {
+        console.log("data",event); // same results as the optional callback above
+        onSubmit("Event " + event.event + " Received, Data: " + JSON.stringify(event.returnValues), false, false )
+      })
+      .on('changed', (event) => {
+        // remove event from local database
+        console.log("changed", event)
+        // onSubmit("Connected to Contract " + subscriptionId)
+      })
+      .on('error', (error, receipt) => { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+        console.log(error, receipt)
+        // onSubmit("Connected to Contract " + subscriptionId)
+      });
 
   }
 
-  const onSubmit = async value => {
+  const addMessage = async () => {
+    console.log('addMessage', text);
+    
+    if(!!text){
+      onSubmit('Adding message to Contract')
+      const result = await myContract.methods.addMessage(text).call()
+      console.log('addMessage result', result);
+    }
+    else
+    {
+      onSubmit(null, "Your Message can't be empty")
+    }
+  }
 
+  const getLastMessage = async () => {
+    const result = await myContract.methods.getLastMsg().call()
+    onSubmit("Last message was : "+result)
+  }
+
+  const getCount = async value => {
+    const result =  await myContract.methods.getCount().call()
+    onSubmit("Messages Count = "+result)
+  }
+
+  const onSubmit = async (value, error, autoDismiss = true) => {
     if (error) {
-      addToast(error.message, { appearance: 'error' })
+      addToast(error, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
     } else {
-      addToast('Saved Successfully', { appearance: 'success' })
+      addToast(value, {
+        appearance: 'success',
+        autoDismiss
+     })
     }
   }
 
@@ -71,12 +99,26 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
+        <h6>
+          Show Events from Contract
+        </h6>
         <p>
-          dApps Event
+          You get all new events with their data shown
         </p>
+        <input
+          type="text"
+          value={text}
+          onChange={handleChange}
+          style={{display:"none"}}
+        />
+        <button style={{ display: "none" }} onClick={() => addMessage()} type="button">Add Message To the Contract</button>
+
+        <button onClick={() => getLastMessage()} type="button">Get Last Message</button>
+
+        <button onClick={() => getCount()} type="button">Get Messages Count</button>
         <a
           className="App-link"
-          onClick={() => onSubmit("fgfddvvfdg")}
+          onClick={() => onSubmit("Azure Ethereum Blockchain")}
         >
           Azure Ethereum Blockchain
         </a>

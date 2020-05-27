@@ -1,5 +1,5 @@
-var HelloBlockchain = artifacts.require("HelloBlockchain");
-var Arg = "Hello world";
+var MemoryBook = artifacts.require("MemoryBook");
+var Arg = "Hello Azure Blockchain!";
 module.exports = deployer => {
-    deployer.deploy(HelloBlockchain, Arg);
+    deployer.deploy(MemoryBook, Arg);
 };

@@ -17,171 +17,84 @@
             {
                 "indexed": false,
                 "internalType": "string",
-                "name": "stateData",
+                "name": "body",
                 "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "author",
+                "type": "address"
             }
         ],
-        "name": "StateChanged",
+        "name": "MessageAdded",
         "type": "event",
-        "signature": "0x8fbf346523616c015d34c71713ea41bb98008282341b0f191f578d20d7ed26e2"
+        "signature": "0x8f0a6aee96af394104f1cbde715858cdab311a3b41800fefe7527ee57d1ffe18"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "counter",
+                "type": "uint256"
+            }
+        ],
+        "name": "MessagesCounter",
+        "type": "event",
+        "signature": "0x6f7692dc040ac674b0db154cf80e38f9a59e3868f55d4b0937731d0c8074f331"
     },
     {
         "constant": true,
         "inputs": [],
-        "name": "RequestMessage",
+        "name": "messagesCount",
         "outputs": [
             {
-                "internalType": "string",
+                "internalType": "uint256",
                 "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0x9b71653b",
+        "value": "",
+        "enumsInfo": {
+            "fields": {},
+            "methods": {}
+        }
+    },
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "messagesList",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "author",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "body",
                 "type": "string"
             }
         ],
         "payable": false,
         "stateMutability": "view",
         "type": "function",
-        "signature": "0xe750e2da",
+        "signature": "0xae934887",
         "value": "",
         "enumsInfo": {
-            "fields": {
-                "State": [
-                    {
-                        "name": "Request",
-                        "value": 0
-                    },
-                    {
-                        "name": "Respond",
-                        "value": 1
-                    }
-                ]
-            },
-            "methods": {}
-        }
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "Requestor",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function",
-        "signature": "0xfd05116c",
-        "value": "",
-        "enumsInfo": {
-            "fields": {
-                "State": [
-                    {
-                        "name": "Request",
-                        "value": 0
-                    },
-                    {
-                        "name": "Respond",
-                        "value": 1
-                    }
-                ]
-            },
-            "methods": {}
-        }
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "Responder",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function",
-        "signature": "0xd181ada1",
-        "value": "",
-        "enumsInfo": {
-            "fields": {
-                "State": [
-                    {
-                        "name": "Request",
-                        "value": 0
-                    },
-                    {
-                        "name": "Respond",
-                        "value": 1
-                    }
-                ]
-            },
-            "methods": {}
-        }
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "ResponseMessage",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function",
-        "signature": "0x5ab28ecb",
-        "value": "",
-        "enumsInfo": {
-            "fields": {
-                "State": [
-                    {
-                        "name": "Request",
-                        "value": 0
-                    },
-                    {
-                        "name": "Respond",
-                        "value": 1
-                    }
-                ]
-            },
-            "methods": {}
-        }
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "State",
-        "outputs": [
-            {
-                "internalType": "enum HelloBlockchain.StateType",
-                "name": "",
-                "type": "uint8"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function",
-        "signature": "0xf1b6dccd",
-        "value": "",
-        "enumsInfo": {
-            "fields": {
-                "State": [
-                    {
-                        "name": "Request",
-                        "value": 0
-                    },
-                    {
-                        "name": "Respond",
-                        "value": 1
-                    }
-                ]
-            },
+            "fields": {},
             "methods": {}
         }
     },
@@ -190,31 +103,57 @@
         "inputs": [
             {
                 "internalType": "string",
-                "name": "requestMessage",
+                "name": "message",
                 "type": "string"
             }
         ],
-        "name": "SendRequest",
+        "name": "addMessage",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function",
-        "signature": "0xa7a1ba15"
+        "signature": "0x6a226a49"
     },
     {
-        "constant": false,
-        "inputs": [
+        "constant": true,
+        "inputs": [],
+        "name": "getLastMsg",
+        "outputs": [
             {
                 "internalType": "string",
-                "name": "responseMessage",
+                "name": "",
                 "type": "string"
             }
         ],
-        "name": "SendResponse",
-        "outputs": [],
         "payable": false,
-        "stateMutability": "nonpayable",
+        "stateMutability": "view",
         "type": "function",
-        "signature": "0x829c2d6d"
+        "signature": "0x35cd96e0",
+        "value": "",
+        "enumsInfo": {
+            "fields": {},
+            "methods": {}
+        }
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "getCount",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0xa87d942c",
+        "value": "",
+        "enumsInfo": {
+            "fields": {},
+            "methods": {}
+        }
     }
 ]
